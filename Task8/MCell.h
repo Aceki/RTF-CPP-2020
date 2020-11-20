@@ -3,8 +3,8 @@
 class MCell
 {
 	//true => проход открыт.
-	bool m_down = false;
-	bool m_right = false;
+	bool m_down;
+	bool m_right;
 
 	MCell(bool down = false, bool right = false) : m_down(down), m_right(right) {}
 public:
