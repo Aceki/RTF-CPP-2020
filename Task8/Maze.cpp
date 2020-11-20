@@ -3,15 +3,21 @@
 
 #include "Maze.h"
 
-bool Maze::isNeigbours(int i1, int j1, int i2, int j2) const
+side Maze::getNeighbourSide(int i1, int j1, int i2, int j2) const
 {
 	int offset_i = i2 - i1;
 	int offset_j = j2 - j1;
 
-	if (abs(offset_i) > 1 || abs(offset_j) > 1)
-		return false;
-	return (abs(offset_i) == 1 && offset_j == 0)
-		|| (offset_i == 0 && abs(offset_j) == 1);
+	if (offset_i == 1)
+		return side::right;
+	if (offset_i == -1)
+		return side::left;
+	if (offset_j == -1)
+		return side::up;
+	if (offset_j == 1)
+		return side::down;
+
+	throw "Not a neighbours!";
 }
 
 bool Maze::inBounds(int i, int j) const
@@ -19,60 +25,64 @@ bool Maze::inBounds(int i, int j) const
 	return i >= 0 && j >= 0 && ((i * m_n + j) < (m_n * m_m));
 }
 
-wchar_t Maze::cellChar(Maze::path path) const
+wchar_t Maze::getPathChar(path path) const
 {
 	switch (path)
 	{
-	case Maze::path::none:
+	case path::none:
 		return L'°';
-	case Maze::path::up_down:
+	case path::up_down:
 		return L'|';
-	case Maze::path::up_left_down:
+	case path::up_left_down:
 		return L'┤';
-	case Maze::path::left_down:
+	case path::left_down:
 		return L'┐';
-	case Maze::path::up_right:
+	case path::up_right:
 		return L'└';
-	case Maze::path::up_left_right:
+	case path::up_left_right:
 		return L'┴';
-	case Maze::path::left_down_right:
+	case path::left_down_right:
 		return L'┬';
-	case Maze::path::up_down_right:
+	case path::up_down_right:
 		return L'├';
-	case Maze::path::left_right:
+	case path::left_right:
 		return L'─';
-	case Maze::path::up_left_down_right:
+	case path::up_left_down_right:
 		return L'┼';
-	case Maze::path::up_left:
+	case path::up_left:
 		return L'┘';
-	case Maze::path::down_right:
+	case path::down_right:
 		return L'┌';
-	case Maze::path::up:
+	case path::up:
 		return L'└';
-	case Maze::path::right:
+	case path::right:
 		return L'─';
-	case Maze::path::down:
+	case path::down:
 		return L'┐';
-	case Maze::path::left:
+	case path::left:
 		return L'─';
 	default:
 		return L'E';
 	}
 }
 
-void Maze::toggleConnection(int i1, int j1, int i2, int j2)
+void Maze::toggleConnection(int i, int j, side side)
 {
-	int offset_i = i2 - i1;
-	int offset_j = j2 - j1;
-
-	if (offset_i == 1)
-		cell(i1, j1).m_right = !cell(i1, j1).m_right;
-	if (offset_i == -1)
-		cell(i2, j2).m_right = !cell(i2, j2).m_right;
-	if (offset_j == -1)
-		cell(i2, j2).m_down = !cell(i2, j2).m_down;
-	if (offset_j == 1)
-		cell(i1, j1).m_down = !cell(i1, j1).m_down;
+	switch (side)
+	{
+	case side::up:
+		cell(i, j - 1).m_down = !cell(i, j - 1).m_down;
+		break;
+	case side::right:
+		cell(i, j).m_right = !cell(i, j).m_right;
+		break;
+	case side::down:
+		cell(i, j).m_down = !cell(i, j).m_down;
+		break;
+	case side::left:
+		cell(i - 1, j).m_right = !cell(i - 1, j).m_right;
+		break;
+	}
 }
 
 Maze::Maze(const Maze& obj) : m_n(obj.m_n), m_m(obj.m_m)
@@ -113,7 +123,7 @@ void Maze::printMaze() const
 
 			path p = static_cast<path>(flag);
 			
-			std::wcout << cellChar(p);
+			std::wcout << getPathChar(p);
 		}
 		std::cout << std::endl;
 	}	
@@ -121,38 +131,30 @@ void Maze::printMaze() const
 
 bool Maze::hasConnection(int i1, int j1, int i2, int j2) const
 {
-	if (!isNeigbours(i1, j1, i2, j2))
-		return false;
-
-	int offset_i = i2 - i1;
-	int offset_j = j2 - j1;
-
-	if (offset_i == 1)
+	switch (getNeighbourSide(i1, j1, i2, j2))
+	{
+	case side::right:
 		return cell(i1, j1).m_right;
-	if (offset_i == -1)
+	case side::left:
 		return cell(i2, j2).m_right;
-	if (offset_j == -1)
+	case side::up:
 		return cell(i2, j2).m_down;
-	if (offset_j == 1)
+	case side::down:
 		return cell(i1, j1).m_down;
-	return false;
+	}
 }
 
 bool Maze::makeConnection(int i1, int j1, int i2, int j2)
 {
-	if (!isNeigbours(i1, j1, i2, j2))
-		return false;
 	if (!hasConnection(i1, j1, i2, j2))
-		toggleConnection(i1, j1, i2, j2);
+		toggleConnection(i1, j1, getNeighbourSide(i1, j1, i2, j2));
 	return true;
 }
 
 bool Maze::removeConnection(int i1, int j1, int i2, int j2)
 {
-	if (!isNeigbours(i1, j1, i2, j2))
-		return false;
 	if (hasConnection(i1, j1, i2, j2))
-		toggleConnection(i1, j1, i2, j2);
+		toggleConnection(i1, j1, getNeighbourSide(i1, j1, i2, j2));
 	return true;
 }
 
