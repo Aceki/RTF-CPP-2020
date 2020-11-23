@@ -3,64 +3,67 @@
 
 #include "Maze.h"
 
-side Maze::getNeighbourSide(int i1, int j1, int i2, int j2) const
+Maze::side Maze::getNeighbourSide(int i1, int j1, int i2, int j2) const
 {
+	if (!inBounds(i1, j1) || !inBounds(i2, j2))
+		return s_none;
+
 	int offset_i = i2 - i1;
 	int offset_j = j2 - j1;
 
-	if (offset_i == 1)
-		return side::right;
 	if (offset_i == -1)
-		return side::left;
+		return s_up;
+	if (offset_i == 1)
+		return s_down;
 	if (offset_j == -1)
-		return side::up;
+		return s_left;
 	if (offset_j == 1)
-		return side::down;
+		return s_right;
 
-	throw "Not a neighbours!";
+	return s_none;
 }
 
 bool Maze::inBounds(int i, int j) const
 {
-	return i >= 0 && j >= 0 && ((i * m_n + j) < (m_n * m_m));
+	return i >= 0 && j >= 0 && ((j * m_n + i) < (m_n * m_m));
 }
 
-wchar_t Maze::getPathChar(path path) const
+wchar_t Maze::getPathChar(path path)
 {
 	switch (path)
 	{
-	case path::none:
-		return L'°';
-	case path::up_down:
+	case p_none:
+		return L'0';
+	case p_up:
+		return L'└';
+	case p_down:
+		return L'┐';
+	case p_left:
+		return L'─';
+	case p_right:
+		return L'─';
+	case p_up_down:
 		return L'|';
-	case path::up_left_down:
+	case p_up_down_left:
 		return L'┤';
-	case path::left_down:
+	case p_down_left:
 		return L'┐';
-	case path::up_right:
+	case p_up_right:
 		return L'└';
-	case path::up_left_right:
+	case p_up_left_right:
 		return L'┴';
-	case path::left_down_right:
+	case p_down_left_right:
 		return L'┬';
-	case path::up_down_right:
+	case p_up_down_right:
 		return L'├';
-	case path::left_right:
+	case p_left_right:
 		return L'─';
-	case path::up_left_down_right:
+	case p_up_down_left_right:
 		return L'┼';
-	case path::up_left:
+	case p_up_left:
 		return L'┘';
-	case path::down_right:
+	case p_down_right:
 		return L'┌';
-	case path::up:
-		return L'└';
-	case path::right:
-		return L'─';
-	case path::down:
-		return L'┐';
-	case path::left:
-		return L'─';
 	default:
 		return L'E';
 	}
@@ -70,27 +73,19 @@ void Maze::toggleConnection(int i, int j, side side)
 {
 	switch (side)
 	{
-	case side::up:
-		cell(i, j - 1).m_down = !cell(i, j - 1).m_down;
+	case s_up:
+		cell(i - 1, j).m_down = !cell(i - 1, j).m_down;
 		break;
-	case side::right:
+	case s_right:
 		cell(i, j).m_right = !cell(i, j).m_right;
 		break;
-	case side::down:
+	case s_down:
 		cell(i, j).m_down = !cell(i, j).m_down;
 		break;
-	case side::left:
-		cell(i - 1, j).m_right = !cell(i - 1, j).m_right;
+	case s_left:
+		cell(i, j - 1).m_right = !cell(i, j - 1).m_right;
 		break;
 	}
-}
-
-Maze::Maze(const Maze& obj) : m_n(obj.m_n), m_m(obj.m_m)
-{
-	int m_field_length = obj.m_n * obj.m_m;
-	m_field = new MCell[m_field_length];
-	for (int i = 0; i < m_field_length; i++)
-		m_field[i] = obj.m_field[i];
 }
 
 Maze::Maze(int n, int m) : m_n(n), m_m(m)
@@ -102,7 +97,7 @@ MCell& Maze::cell(int i, int j) const
 {
 	if (!inBounds(i, j))
 		throw "Index out of range!";
-	return m_field[i * m_n + j];
+	return m_field[j * m_n + i];
 }
 
 void Maze::printMaze() const
@@ -111,19 +106,15 @@ void Maze::printMaze() const
 	{
 		for (int n = 0; n < m_n; n++)
 		{
-			bool up = inBounds(n, m - 1) && cell(n, m - 1).m_down;
-			bool right = cell(n, m).m_right;
-			bool down = cell(n, m).m_down;
-			bool left = inBounds(n - 1, m) && cell(n - 1, m).m_right;
+			bool up = inBounds(m - 1, n) && cell(m - 1, n).m_down;
+			bool down = cell(m, n).m_down;
+			bool left = inBounds(m, n - 1) && cell(m, n - 1).m_right;
+			bool right = cell(m, n).m_right;
 
-			int flag = up;
-			flag = flag << 1 | right;
-			flag = flag << 1 | down;
-			flag = flag << 1 | left;
+			int path = path::p_none;
+			path |= (up * p_up) | (down * p_down) | (left * p_left) | (right * p_right);
 
-			path p = static_cast<path>(flag);
-			
-			std::wcout << getPathChar(p);
+			std::wcout << Maze::getPathChar(static_cast<Maze::path>(path));
 		}
 		std::cout << std::endl;
 	}	
@@ -133,14 +124,16 @@ bool Maze::hasConnection(int i1, int j1, int i2, int j2) const
 {
 	switch (getNeighbourSide(i1, j1, i2, j2))
 	{
-	case side::right:
-		return cell(i1, j1).m_right;
-	case side::left:
-		return cell(i2, j2).m_right;
-	case side::up:
+	case s_up:
 		return cell(i2, j2).m_down;
-	case side::down:
+	case s_down:
 		return cell(i1, j1).m_down;
+	case s_left:
+		return cell(i2, j2).m_right;
+	case s_right:
+		return cell(i1, j1).m_right;
+	default:
+		return false;
 	}
 }
 
