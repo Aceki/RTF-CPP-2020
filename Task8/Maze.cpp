@@ -35,13 +35,13 @@ wchar_t Maze::getPathChar(path path)
 	case p_none:
 		return L'0';
 	case p_up:
-		return L'└';
+		return L'0';
 	case p_down:
-		return L'┐';
+		return L'0';
 	case p_left:
-		return L'─';
+		return L'0';
 	case p_right:
-		return L'─';
+		return L'0';
 	case p_up_down:
 		return L'|';
 	case p_up_down_left:
@@ -117,7 +117,7 @@ void Maze::printMaze() const
 			std::wcout << Maze::getPathChar(static_cast<Maze::path>(path));
 		}
 		std::cout << std::endl;
-	}	
+	}
 }
 
 bool Maze::hasConnection(int i1, int j1, int i2, int j2) const
@@ -154,4 +154,16 @@ bool Maze::removeConnection(int i1, int j1, int i2, int j2)
 Maze::~Maze()
 {
 	delete[] m_field;
+}
+
+void fillMaze(Maze& maze, const MTreeNode* startNode)
+{
+	if (startNode->childCount() == 0)
+		return;
+	for (int i = 0; i < startNode->childCount(); i++)
+	{
+		const MTreeNode* child = startNode->child(i);
+		maze.makeConnection(startNode->i(), startNode->j(), child->i(), child->j());
+		fillMaze(maze, child);
+	}
 }

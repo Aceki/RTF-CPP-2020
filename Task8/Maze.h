@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MCell.h"
+#include "MTreeNode.h"
 
 class Maze
 {
@@ -38,11 +39,17 @@ public:
 
 	Maze(int n, int m);
 
+	int n() const { return m_n; }
+
+	int m() const { return m_m; }
+
 	MCell& cell(int i, int j) const;
 
 	void printMaze() const;
 
 	bool hasConnection(int i1, int j1, int i2, int j2) const;
+
+	bool inBounds(int i, int j) const;
 
 	bool makeConnection(int i1, int j1, int i2, int j2);
 
@@ -56,10 +63,9 @@ private:
 
 	static wchar_t getPathChar(path path);
 
-	bool inBounds(int i, int j) const;
-
 	side getNeighbourSide(int i1, int j1, int i2, int j2) const;
 
 	void toggleConnection(int i1, int j1, side side);
 };
 
+void fillMaze(Maze& maze, const MTreeNode* startNode);
