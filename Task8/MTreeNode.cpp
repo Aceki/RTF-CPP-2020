@@ -193,6 +193,5 @@ void printTraversalField(const MTreeNode* startNode, int rows, int columns)
 
 		delete[] weights[i];
 	}
-
 	delete[] weights;
 }

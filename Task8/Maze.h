@@ -39,10 +39,6 @@ public:
 
 	Maze(int n, int m);
 
-	int n() const { return m_n; }
-
-	int m() const { return m_m; }
-
 	MCell& cell(int i, int j) const;
 
 	void printMaze() const;
