@@ -106,7 +106,7 @@ void Maze::printMaze() const
 			std::wcout << path_char;
 		}
 		std::cout << std::endl;
-	}	
+	}
 }
 
 bool Maze::hasConnection(int i1, int j1, int i2, int j2) const
