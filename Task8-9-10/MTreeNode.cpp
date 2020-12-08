@@ -1,7 +1,9 @@
 #include <iostream>
 #include <stdlib.h>
+#include <vector>
 
 #include "MTreeNode.h"
+#include <cassert>
 
 
 MTreeNode* MTreeNode::beginTree(int i, int j)
@@ -16,6 +18,28 @@ MTreeNode* MTreeNode::beginTree(int i, int j)
 	node->m_children = new MTreeNode[4];
 
 	return node;
+}
+
+const MTreeNode* MTreeNode::searchNode(const MTreeNode& tree, const int i, const int j) // TODO: Метод поиска нод.
+{
+	if (tree.m_i == i && tree.m_j == j)
+		return &tree;
+
+	std::vector<const MTreeNode*> nodes;
+	nodes.push_back(&tree);
+
+	while (!nodes.empty())
+	{
+		const MTreeNode* currentNode = nodes.back();
+		nodes.pop_back();
+		for (int c = 0; c < currentNode->childCount(); c++)
+		{
+			const MTreeNode* child = currentNode->child(c);
+			if (child->i() == i && child->j() == j)
+				return child;
+			nodes.push_back(child);
+		}
+	}
 }
 
 const MTreeNode* MTreeNode::child(int i) const

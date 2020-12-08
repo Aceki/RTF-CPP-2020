@@ -10,7 +10,7 @@ Maze::Maze(int n, int m) : m_n(n), m_m(m)
 
 MCell& Maze::cell(int i, int j) const
 {
-	return m_field[j * m_n + i];
+	return m_field[i * m_m + j];
 }
 
 void Maze::printMaze() const
@@ -35,14 +35,14 @@ void Maze::printMaze() const
 		p_down_right = p_down | p_right,
 	};
 
-	for (int m = 0; m < m_m; m++)
+	for (int n = 0; n < m_n; n++)
 	{
-		for (int n = 0; n < m_n; n++)
+		for (int m = 0; m < m_m; m++)
 		{
-			bool up = cell(m - 1, n).m_down && m > 0;
-			bool down = cell(m, n).m_down;
-			bool left = cell(m, n - 1).m_right && n > 0;
-			bool right = cell(m, n).m_right;
+			bool up = cell(n - 1, m).m_down && n > 0;
+			bool down = cell(n, m).m_down;
+			bool left = cell(n, m - 1).m_right && m > 0;
+			bool right = cell(n, m).m_right;
 
 			path p = static_cast<path>((p_none) | (up * p_up) | (down * p_down) | (left * p_left) | (right * p_right));
 
@@ -105,7 +105,7 @@ void Maze::printMaze() const
 
 			std::wcout << path_char;
 		}
-		std::cout << std::endl;
+		std::wcout << std::endl;
 	}
 }
 

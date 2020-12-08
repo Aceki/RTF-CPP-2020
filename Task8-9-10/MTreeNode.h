@@ -5,6 +5,8 @@ class MTreeNode
 public:
 	static MTreeNode* beginTree(int i, int j);
 
+	static const MTreeNode* searchNode(const MTreeNode& tree, const int i, const int j);
+
 	int i() const { return m_i; }
 
 	int j() const { return m_j; }
