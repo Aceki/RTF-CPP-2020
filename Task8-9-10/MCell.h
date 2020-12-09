@@ -9,9 +9,9 @@ public:
 
 	friend class Maze;
 private:
-	MCell() = default;
-
 	bool m_down = false;
 	bool m_right = false;
+
+	MCell() = default;
 };
 
