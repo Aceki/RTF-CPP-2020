@@ -6,6 +6,18 @@
 
 using namespace std;
 
+enum direction
+{
+	d_up,
+	d_down,
+	d_left,
+	d_right
+};
+
+void buildFullMaze(Maze& iMaze, MTreeNode& tree);
+
+MTreeNode* makeChain(MTreeNode& startNode, direction dir, int length);
+
 int main()
 {
     setlocale(LC_ALL, "en_US.UTF-8");
@@ -17,95 +29,97 @@ int main()
 
 	MTreeNode* startNode = MTreeNode::beginTree(0, 0);
 
-#pragma region LadderTreeCreating
+	MTreeNode* currentNode = startNode;
+	while ((currentNode->i() + 1 < mazeRows) && (currentNode->j() + 1 < mazeColumns))
 	{
-		MTreeNode* currentNode = startNode;
-		while (currentNode != nullptr) 
-		{
-			MTreeNode* temp = currentNode;
+		makeChain(*currentNode, d_down, mazeRows - currentNode->i() - 1);
+		makeChain(*currentNode, d_right, mazeColumns - currentNode->j() - 1);
 
-			for (int i = currentNode->i(); i < mazeRows - 1; i++)
-			{
-				temp->addChild(temp->i() + 1, temp->j());
-				temp = temp->hasChild(temp->i() + 1, temp->j());
-			}
-			
-			temp = currentNode;
-
-			for (int i = currentNode->j(); i < mazeColumns - 1; i++)
-			{
-				temp->addChild(temp->i(), temp->j() + 1);
-				temp = temp->hasChild(temp->i(), temp->j() + 1);
-			}
-			
-
-			temp = currentNode->hasChild(currentNode->i(), currentNode->j() + 1);
-			temp->addChild(temp->i() + 1, temp->j());
-			currentNode = temp->hasChild(temp->i() + 1, temp->j());
-
-			if (currentNode->i() + 1 == mazeRows && currentNode->j() + 1 == mazeColumns)
-				currentNode = nullptr;
-		}
+		currentNode = currentNode->hasChild(currentNode->i(), currentNode->j() + 1);
+		currentNode->addChild(currentNode->i() + 1, currentNode->j());
+		currentNode = currentNode->hasChild(currentNode->i() + 1, currentNode->j());
 	}
-#pragma endregion
 
-
-	int** weights = new int*[mazeRows];
-	for (int i = 0; i < mazeRows; i++)
-		weights[i] = new int[mazeColumns];
-
-#pragma region MazeFilling
-	{
-		vector<const MTreeNode*> nodes;
-		nodes.push_back(startNode);
-		while (!nodes.empty()) 
-		{
-			const MTreeNode* currentNode = nodes.back();
-			nodes.pop_back();
-			for (int i = 0; i < currentNode->childCount(); i++)
-			{
-				const MTreeNode* child = currentNode->child(i);
-				maze.makeConnection(currentNode->i(), currentNode->j(), child->i(), child->j());
-				nodes.push_back(child);
-			}
-		}
-	}
-#pragma endregion
+	buildFullMaze(maze, *startNode);
 
 	maze.printMaze();
+	
+	int* weights = new int[mazeRows * mazeColumns];
+	weights[0] = 0;
 
-#pragma region WeightsCounting
+	vector<const MTreeNode*> nodes;
+	nodes.reserve(mazeRows * mazeColumns);
+	nodes.push_back(startNode);
+	while (!nodes.empty())
 	{
-		vector<const MTreeNode*> nodes;
-		nodes.push_back(startNode);
-		weights[0][0] = 0;
-		while (!nodes.empty())
+		const MTreeNode* currentNode = nodes.back();
+		nodes.pop_back();
+		for (int i = 0; i < currentNode->childCount(); i++)
 		{
-			const MTreeNode* currentNode = nodes.back();
-			nodes.pop_back();
-			for (int i = 0; i < currentNode->childCount(); i++)
-			{
-				const MTreeNode* child = currentNode->child(i);
-				weights[child->i()][child->j()] = child->distance();
-				nodes.push_back(child);
-			}
+			const MTreeNode* child = currentNode->child(i);
+			weights[child->i() * mazeColumns + child->j()] = child->distance();
+			nodes.push_back(child);
 		}
 	}
-#pragma endregion
 
-#pragma region TraversalFieldPrinting
+	for (int i = 0; i < mazeRows; i++)
 	{
-		for (int i = 0; i < mazeRows; i++)
+		for (int j = 0; j < mazeColumns; j++)
 		{
-			for (int j = 0; j < mazeColumns; j++)
-			{
-				std::cout << weights[i][j] << ' ';
-			}
-			std::cout << std::endl;
-
-			delete[] weights[i];
+			std::cout << weights[i * mazeColumns + j] << ' ';
 		}
-		delete[] weights;
+		std::cout << std::endl;
 	}
-#pragma endregion
+
+	delete[] weights;
+}
+
+void buildFullMaze(Maze& iMaze, MTreeNode& tree)
+{
+	vector<const MTreeNode*> nodes;
+	nodes.push_back(&tree);
+	while (!nodes.empty())
+	{
+		const MTreeNode* currentNode = nodes.back();
+		nodes.pop_back();
+		for (int i = 0; i < currentNode->childCount(); i++)
+		{
+			const MTreeNode* child = currentNode->child(i);
+			iMaze.makeConnection(currentNode->i(), currentNode->j(), child->i(), child->j());
+			nodes.push_back(child);
+		}
+	}
+}
+
+MTreeNode* makeChain(MTreeNode& startNode, direction dir, int length)
+{
+	if (length == 0)
+		return &startNode;
+
+	int child_i = startNode.i();
+	int child_j = startNode.j();
+
+	switch (dir)
+	{
+	case d_up:
+		child_i -= 1;
+		break;
+	case d_down:
+		child_i += 1;
+		break;
+	case d_left:
+		child_j -= 1;
+		break;
+	case d_right:
+		child_j += 1;
+		break;
+	default:
+		break;
+	}
+
+	startNode.addChild(child_i, child_j);
+	MTreeNode* child = startNode.hasChild(child_i, child_j);
+	if (child != nullptr)
+		return makeChain(*child, dir, length - 1);
+	return &startNode;
 }

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "MTreeNode.h"
+#include <cassert>
 
 
 MTreeNode* MTreeNode::beginTree(int i, int j)
@@ -10,9 +11,7 @@ MTreeNode* MTreeNode::beginTree(int i, int j)
 
 	node->m_i = i;
 	node->m_j = j;
-	node->m_distance = 0;
-	node->m_child_count = 0;
-	node->m_parent = nullptr;
+
 	node->m_children = new MTreeNode[4];
 
 	return node;
@@ -30,22 +29,14 @@ bool MTreeNode::addChild(int i, int j)
 	if (m_child_count == 4 || hasChild(i, j))
 		return false;
 
-	int offset_i = m_i - i;
-	int offset_j = m_j - j;
-
-	if (abs(offset_i) + abs(offset_j) != 1)
+	if (abs(m_i - i) + abs(m_j - j) != 1)
 		return false;
 
-	MTreeNode* child = m_children + m_child_count;
+	MTreeNode child(this);
+	child.m_i = i;
+	child.m_j = j;
 
-	child->m_i = i;
-	child->m_j = j;
-	child->m_distance = m_distance + 1;
-	child->m_parent = this;
-	child->m_child_count = 0;
-	child->m_children = new MTreeNode[4];
-
-	m_child_count++;
+	m_children[m_child_count++] = std::move(child);
 
 	return true;
 }
@@ -60,21 +51,33 @@ MTreeNode* MTreeNode::hasChild(int i, int j) const
 
 MTreeNode::~MTreeNode()
 {
-	if (m_children == nullptr)
-		return;
 	delete[] m_children;
-}
-
-MTreeNode::MTreeNode()
-{
-	m_i = m_j = m_distance = m_child_count = -1;
-	m_parent = m_children = nullptr;
 }
 
 MTreeNode::MTreeNode(MTreeNode* parent)
 {
+	assert(parent != nullptr);
+
 	m_distance = parent->distance() + 1;
-	m_child_count = 0;
 	m_parent = parent;
 	m_children = new MTreeNode[4];
+}
+
+MTreeNode& MTreeNode::operator=(MTreeNode&& obj) noexcept
+{
+	if (this == &obj)
+		return obj;
+
+	m_i = obj.m_i;
+	m_j = obj.m_j;
+	m_distance = obj.m_distance;
+	m_child_count = obj.m_child_count;
+	
+	m_parent = obj.m_parent;
+	obj.m_parent = nullptr;
+
+	m_children = obj.m_children;
+	obj.m_children = nullptr;
+
+	return *this;
 }
