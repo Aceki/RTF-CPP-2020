@@ -117,7 +117,7 @@ bool Maze::hasConnection(int i1, int j1, int i2, int j2) const
 	assert(i1 >= 0 && i1 < m_n && j1 >= 0 && j1 < m_m);
 	assert(i2 >= 0 && i2 < m_n && j2 >= 0 && j2 < m_m);
 
-	if (!isNeighbours(i1, j1, i2, j2))
+	if (abs(i2 - i1) + abs(j2 - j1) != 1)
 		return false;
 
 	if (abs(i2 - i1) == 1)
@@ -131,7 +131,7 @@ bool Maze::makeConnection(int i1, int j1, int i2, int j2)
 	assert(i1 >= 0 && i1 < m_n && j1 >= 0 && j1 < m_m);
 	assert(i2 >= 0 && i2 < m_n && j2 >= 0 && j2 < m_m);
 
-	if (!isNeighbours(i1, j1, i2, j2))
+	if (abs(i2 - i1) + abs(j2 - j1) != 1)
 		return false;
 
 	if (abs(i2 - i1) == 1)
@@ -147,7 +147,7 @@ bool Maze::removeConnection(int i1, int j1, int i2, int j2)
 	assert(i1 >= 0 && i1 < m_n && j1 >= 0 && j1 < m_m);
 	assert(i2 >= 0 && i2 < m_n && j2 >= 0 && j2 < m_m);
 
-	if (!isNeighbours(i1, j1, i2, j2))
+	if (abs(i2 - i1) + abs(j2 - j1) != 1)
 		return false;
 
 	if (abs(i2 - i1) == 1)
