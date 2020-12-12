@@ -6,22 +6,17 @@
 
 using namespace std;
 
-void buildFullMaze(Maze& iMaze, MTreeNode& tree)
+enum direction
 {
-	vector<const MTreeNode*> nodes;
-	nodes.push_back(&tree);
-	while (!nodes.empty())
-	{
-		const MTreeNode* currentNode = nodes.back();
-		nodes.pop_back();
-		for (int i = 0; i < currentNode->childCount(); i++)
-		{
-			const MTreeNode* child = currentNode->child(i);
-			iMaze.makeConnection(currentNode->i(), currentNode->j(), child->i(), child->j());
-			nodes.push_back(child);
-		}
-	}
-}
+	d_up,
+	d_down,
+	d_left,
+	d_right
+};
+
+void buildFullMaze(Maze& iMaze, MTreeNode& tree);
+
+MTreeNode* makeChain(MTreeNode& startNode, direction dir, int length);
 
 int main()
 {
@@ -37,7 +32,6 @@ int main()
 
 	vector<MTreeNode*> stack;
 	stack.push_back(startNode);
-
 	while (!stack.empty())
 	{
 		MTreeNode* currentNode = stack.back();
@@ -97,18 +91,15 @@ int main()
 		stack.push_back(neighbours[nextNodeIndex]);
 	}
 
-
-	int** weights = new int*[mazeRows];
-	for (int i = 0; i < mazeRows; i++)
-		weights[i] = new int[mazeColumns];
-
 	buildFullMaze(maze, *startNode);
 
 	maze.printMaze();
 
+	int* weights = new int[mazeRows * mazeColumns];
+	weights[startNode->i() * mazeColumns + startNode->j()] = 0;
+
 	vector<const MTreeNode*> nodes;
 	nodes.push_back(startNode);
-	weights[startNode->i()][startNode->j()] = 0;
 	while (!nodes.empty())
 	{
 		const MTreeNode* currentNode = nodes.back();
@@ -116,7 +107,7 @@ int main()
 		for (int i = 0; i < currentNode->childCount(); i++)
 		{
 			const MTreeNode* child = currentNode->child(i);
-			weights[child->i()][child->j()] = child->distance();
+			weights[child->i() * mazeColumns + child->j()] = child->distance();
 			nodes.push_back(child);
 		}
 	}
@@ -127,15 +118,63 @@ int main()
 	{
 		for (int j = 0; j < mazeColumns; j++)
 		{
-			if (weights[i][j] > max)
-				max = weights[i][j];
-			printf("%-3d ", weights[i][j]);
+			if (weights[i * mazeColumns + j] > max)
+				max = weights[i * mazeColumns + j];
+			printf("%-3d ", weights[i * mazeColumns + j]);
 		}
 		std::cout << std::endl;
-
-		delete[] weights[i];
 	}
 	delete[] weights;
 
 	cout << max;
+}
+
+MTreeNode* makeChain(MTreeNode& startNode, direction dir, int length)
+{
+	if (length == 0)
+		return &startNode;
+
+	int child_i = startNode.i();
+	int child_j = startNode.j();
+
+	switch (dir)
+	{
+	case d_up:
+		child_i -= 1;
+		break;
+	case d_down:
+		child_i += 1;
+		break;
+	case d_left:
+		child_j -= 1;
+		break;
+	case d_right:
+		child_j += 1;
+		break;
+	default:
+		break;
+	}
+
+	startNode.addChild(child_i, child_j);
+	MTreeNode* child = startNode.hasChild(child_i, child_j);
+	if (child != nullptr)
+		return makeChain(*child, dir, length - 1);
+	return &startNode;
+}
+
+void buildFullMaze(Maze& iMaze, MTreeNode& tree)
+{
+	vector<const MTreeNode*> nodes;
+	nodes.push_back(&tree);
+	while (!nodes.empty())
+	{
+		const MTreeNode* currentNode = nodes.back();
+		nodes.pop_back();
+		for (int i = 0; i < currentNode->childCount(); i++)
+		{
+			const MTreeNode* child = currentNode->child(i);
+			iMaze.makeConnection(currentNode->i(), currentNode->j(), child->i(), child->j());
+			nodes.push_back(child);
+		}
+	}
 }
