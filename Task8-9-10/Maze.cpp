@@ -1,4 +1,5 @@
 ﻿#include <cmath>
+#include <cassert>
 #include <iostream>
 
 #include "Maze.h"
@@ -10,6 +11,8 @@ Maze::Maze(int n, int m) : m_n(n), m_m(m)
 
 MCell& Maze::cell(int i, int j) const
 {
+	assert(i >= 0 && i < m_n && j >= 0 && j < m_m);
+  
 	return m_field[i * m_m + j];
 }
 
@@ -39,9 +42,9 @@ void Maze::printMaze() const
 	{
 		for (int m = 0; m < m_m; m++)
 		{
-			bool up = cell(n - 1, m).m_down && n > 0;
+			bool up = n > 0 && cell(n - 1, m).m_down;
 			bool down = cell(n, m).m_down;
-			bool left = cell(n, m - 1).m_right && m > 0;
+			bool left = m > 0 && cell(n, m - 1).m_right;
 			bool right = cell(n, m).m_right;
 
 			path p = static_cast<path>((p_none) | (up * p_up) | (down * p_down) | (left * p_left) | (right * p_right));
@@ -111,84 +114,47 @@ void Maze::printMaze() const
 
 bool Maze::hasConnection(int i1, int j1, int i2, int j2) const
 {
-	int offset_i = i2 - i1;
-	int offset_j = j2 - j1;
+	assert(i1 >= 0 && i1 < m_n && j1 >= 0 && j1 < m_m);
+	assert(i2 >= 0 && i2 < m_n && j2 >= 0 && j2 < m_m);
 
-	if (offset_i == -1)
-		return cell(i2, j2).m_down;
-	if (offset_i == 1)
-		return cell(i1, j1).m_down;
-	if (offset_j == -1)
-		return cell(i2, j2).m_right;
-	if (offset_j == 1)
-		return cell(i1, j1).m_right;
+	if (!isNeighbours(i1, j1, i2, j2))
+		return false;
 
-	return false;
+	if (abs(i2 - i1) == 1)
+		return cell(std::min(i1, i2), j1).m_down;
+	else
+		return cell(i1, std::min(j1, j1)).m_right;
 }
 
 bool Maze::makeConnection(int i1, int j1, int i2, int j2)
 {
-	if (!hasConnection(i1, j1, i2, j2))
-	{
-		int offset_i = i2 - i1;
-		int offset_j = j2 - j1;
+	assert(i1 >= 0 && i1 < m_n && j1 >= 0 && j1 < m_m);
+	assert(i2 >= 0 && i2 < m_n && j2 >= 0 && j2 < m_m);
 
-		if (offset_i == -1)
-		{
-			cell(i2, j2).m_down = true;
-			return true;
-		}
-		if (offset_i == 1)
-		{
-			cell(i1, j1).m_down = true;
-			return true;
-		}
-		if (offset_j == -1)
-		{
-			cell(i2, j2).m_right = true;
-			return true;
-		}
-		if (offset_j == 1)
-		{
-			cell(i1, j1).m_right = true;
-			return true;
-		}
-
+	if (!isNeighbours(i1, j1, i2, j2))
 		return false;
-	}
+
+	if (abs(i2 - i1) == 1)
+		cell(std::min(i1, i2), j1).m_down = true;
+	else
+		cell(i1, std::min(j1, j1)).m_right = true;
+
 	return true;
 }
 
 bool Maze::removeConnection(int i1, int j1, int i2, int j2)
 {
-	if (hasConnection(i1, j1, i2, j2))
-	{
-		int offset_i = i2 - i1;
-		int offset_j = j2 - j1;
+	assert(i1 >= 0 && i1 < m_n && j1 >= 0 && j1 < m_m);
+	assert(i2 >= 0 && i2 < m_n && j2 >= 0 && j2 < m_m);
 
-		if (offset_i == -1)
-		{
-			cell(i2, j2).m_down = false;
-			return true;
-		}
-		if (offset_i == 1)
-		{
-			cell(i1, j1).m_down = false;
-			return true;
-		}
-		if (offset_j == -1)
-		{
-			cell(i2, j2).m_right = false;
-			return true;
-		}
-		if (offset_j == 1)
-		{
-			cell(i1, j1).m_right = false;
-			return true;
-		}
-
+	if (!isNeighbours(i1, j1, i2, j2))
 		return false;
-	}
+
+	if (abs(i2 - i1) == 1)
+		cell(std::min(i1, i2), j1).m_down = false;
+	else
+		cell(i1, std::min(j1, j1)).m_right = false;
+
 	return true;
 }
 
