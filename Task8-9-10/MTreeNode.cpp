@@ -1,8 +1,9 @@
 #include <iostream>
 #include <stdlib.h>
+#include <cassert>
 
 #include "MTreeNode.h"
-#include <cassert>
+
 
 
 MTreeNode* MTreeNode::beginTree(int i, int j)
@@ -54,7 +55,7 @@ MTreeNode::~MTreeNode()
 	delete[] m_children;
 }
 
-MTreeNode::MTreeNode(MTreeNode* parent)
+MTreeNode::MTreeNode(const MTreeNode* parent)
 {
 	assert(parent != nullptr);
 

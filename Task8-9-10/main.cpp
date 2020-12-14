@@ -4,8 +4,6 @@
 #include "Maze.h"
 #include "MTreeNode.h"
 
-using namespace std;
-
 enum direction
 {
 	d_up,
@@ -47,7 +45,7 @@ int main()
 	int* weights = new int[mazeRows * mazeColumns];
 	weights[0] = 0;
 
-	vector<const MTreeNode*> nodes;
+	std::vector<const MTreeNode*> nodes;
 	nodes.reserve(mazeRows * mazeColumns);
 	nodes.push_back(startNode);
 	while (!nodes.empty())
@@ -76,7 +74,7 @@ int main()
 
 void buildFullMaze(Maze& iMaze, MTreeNode& tree)
 {
-	vector<const MTreeNode*> nodes;
+	std::vector<const MTreeNode*> nodes;
 	nodes.push_back(&tree);
 	while (!nodes.empty())
 	{

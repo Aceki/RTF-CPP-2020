@@ -25,18 +25,18 @@ public:
 private:
 	MTreeNode() = default;
 
-	MTreeNode(const MTreeNode & obj) = delete;
+	MTreeNode(const MTreeNode& obj) = delete;
 
-	MTreeNode(MTreeNode * parent);
+	MTreeNode(const MTreeNode* parent);
 
-	MTreeNode& operator=(MTreeNode && obj) noexcept;
+	MTreeNode& operator=(MTreeNode&& obj) noexcept;
 
-	MTreeNode& operator=(const MTreeNode & obj) = delete;
+	MTreeNode& operator=(const MTreeNode& obj) = delete;
 
 	int m_i = -1;
 	int m_j = -1;
 	int m_distance = 0;
 	int m_child_count = 0;
-	MTreeNode* m_parent = nullptr;
+	const MTreeNode* m_parent = nullptr;
 	MTreeNode* m_children = nullptr;
 };
