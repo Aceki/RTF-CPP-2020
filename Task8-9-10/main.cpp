@@ -26,9 +26,33 @@ int main()
     constexpr int mazeRows = 20;
     constexpr int mazeColumns = 20;
 
+	//Border selection
+	int startI = 0;
+	int startJ = 0;
+	direction startDir = static_cast<direction>(rand() % 4);
+	switch (startDir)
+	{
+	case d_up:
+		startI = 0;
+		startJ = rand() % mazeColumns;
+		break;
+	case d_down:
+		startI = mazeRows - 1;
+		startJ = rand() % mazeColumns;
+		break;
+	case d_left:
+		startJ = 0;
+		startI = rand() % mazeRows;
+		break;
+	case d_right:
+		startJ = mazeColumns - 1;
+		startI = rand() % mazeRows;
+		break;
+	}
+
     Maze maze(mazeRows, mazeColumns);
 
-	MTreeNode* startNode = MTreeNode::beginTree(0, 0 + rand() % mazeColumns);
+	MTreeNode* startNode = MTreeNode::beginTree(startI, startJ);
 
 	vector<MTreeNode*> stack;
 	stack.push_back(startNode);
