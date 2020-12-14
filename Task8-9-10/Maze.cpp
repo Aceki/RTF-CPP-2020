@@ -147,7 +147,7 @@ bool Maze::makeConnection(int i1, int j1, int i2, int j2)
 	if (abs_offset_i == 1)
 		cell(std::min(i1, i2), j1).m_down = true;
 	else
-		cell(i1, std::min(j1, j1)).m_right = true;
+		cell(i1, std::min(j1, j2)).m_right = true;
 
 	return true;
 }
