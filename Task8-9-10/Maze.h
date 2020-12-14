@@ -21,8 +21,6 @@ public:
 
 	~Maze();
 private:
-	bool isNeighbours(int i1, int j1, int i2, int j2) const { return abs(i2 - i1) + abs(j2 - j1) == 1; }
-
 	MCell* m_field;
 	const int m_n;
 	const int m_m;
