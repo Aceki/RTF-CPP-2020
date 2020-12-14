@@ -33,7 +33,6 @@ int main()
 	switch (startDir)
 	{
 	case d_up:
-		startI = 0;
 		startJ = rand() % mazeColumns;
 		break;
 	case d_down:
@@ -41,7 +40,6 @@ int main()
 		startJ = rand() % mazeColumns;
 		break;
 	case d_left:
-		startJ = 0;
 		startI = rand() % mazeRows;
 		break;
 	case d_right:
