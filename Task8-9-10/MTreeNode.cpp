@@ -1,11 +1,9 @@
-#include <iostream>
-#include <stdlib.h>
 #include <vector>
 #include <cassert>
+#include <stdlib.h>
+#include <iostream>
 
 #include "MTreeNode.h"
-
-
 
 MTreeNode* MTreeNode::beginTree(int i, int j)
 {

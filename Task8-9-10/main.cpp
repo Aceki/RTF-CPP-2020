@@ -1,18 +1,22 @@
-#include <iostream>
+#include <cmath>
 #include <vector>
+#include <iostream>
+#include <algorithm>
 
-#include "Maze.h"
 #include "MTreeNode.h"
-
-using namespace std;
+#include "Maze.h"
 
 enum direction
 {
-	d_up,
+	d_up = 0,
 	d_down,
 	d_left,
 	d_right
 };
+
+int* getMTreeWeights(const MTreeNode& startNode, int mazeRows, int mazeColumns);
+
+void printMTreeWeights(const int* weights, int mazeRows, int mazeColumns);
 
 void buildFullMaze(Maze& iMaze, MTreeNode& tree);
 
@@ -52,7 +56,8 @@ int main()
 
 	MTreeNode* startNode = MTreeNode::beginTree(startI, startJ);
 
-	vector<MTreeNode*> stack;
+	//Generating a random tree
+	std::vector<MTreeNode*> stack;
 	stack.push_back(startNode);
 	while (!stack.empty())
 	{
@@ -62,45 +67,27 @@ int main()
 		int neighboursCount = 0;
 		MTreeNode* neighbours[4];
 
-		if (MTreeNode::searchNode(*startNode, currentNode->i() - 1, currentNode->j()) == nullptr
-			&& currentNode->i() - 1 >= 0 && currentNode->i() - 1 < mazeRows && currentNode->j() >= 0 && currentNode->j() < mazeColumns)
-		{
-			currentNode->addChild(currentNode->i() - 1, currentNode->j());
-			neighbours[neighboursCount++] = currentNode->hasChild(currentNode->i() - 1, currentNode->j());
-		}
+		for (int offsetI = -1; offsetI <= 1; offsetI++)
+			for (int offsetJ = -1; offsetJ <= 1; offsetJ++)
+			{
+				if (abs(offsetI) + abs(offsetJ) != 1)
+					continue;
 
+				int childI = currentNode->i() + offsetI;
+				int childJ = currentNode->j() + offsetJ;
 
-		if (currentNode->i() + 1 >= 0 && currentNode->i() + 1 < mazeRows && currentNode->j() >= 0 && currentNode->j() < mazeColumns
-			&& MTreeNode::searchNode(*startNode, currentNode->i() + 1, currentNode->j()) == nullptr)
-		{
-			currentNode->addChild(currentNode->i() + 1, currentNode->j());
-			neighbours[neighboursCount++] = currentNode->hasChild(currentNode->i() + 1, currentNode->j());
-		}
-
-		if (currentNode->i() >= 0 && currentNode->i() < mazeRows && currentNode->j() - 1 >= 0 && currentNode->j() - 1 < mazeColumns
-			&& MTreeNode::searchNode(*startNode, currentNode->i(), currentNode->j() - 1) == nullptr)
-		{
-			currentNode->addChild(currentNode->i(), currentNode->j() - 1);
-			neighbours[neighboursCount++] = currentNode->hasChild(currentNode->i(), currentNode->j() - 1);
-		}
-
-		if (currentNode->i() >= 0 && currentNode->i() < mazeRows && currentNode->j() + 1 >= 0 && currentNode->j() + 1 < mazeColumns
-			&& MTreeNode::searchNode(*startNode, currentNode->i(), currentNode->j() + 1) == nullptr)
-		{
-			currentNode->addChild(currentNode->i(), currentNode->j() + 1);
-			neighbours[neighboursCount++] = currentNode->hasChild(currentNode->i(), currentNode->j() + 1);
-		}
+				if (childI >= 0 && childI < mazeRows && childJ >= 0 && childJ < mazeColumns
+					&& MTreeNode::searchNode(*startNode, childI, childJ) == nullptr)
+				{
+					currentNode->addChild(childI, childJ);
+					neighbours[neighboursCount++] = currentNode->hasChild(childI, childJ);
+				}
+			}
 
 		if (neighboursCount == 0)
 			continue;
 
-		if (neighboursCount == 1)
-		{
-			stack.push_back(neighbours[0]);
-			continue;
-		}
-
-		int nextNodeIndex = 0 + rand() % neighboursCount;
+		int nextNodeIndex = rand() % neighboursCount;
 
 		for (int i = 0; i < neighboursCount; i++)
 		{
@@ -117,38 +104,49 @@ int main()
 
 	maze.printMaze();
 
-	int* weights = new int[mazeRows * mazeColumns];
-	weights[startNode->i() * mazeColumns + startNode->j()] = 0;
+	int* weights = getMTreeWeights(*startNode, mazeRows, mazeColumns);
 
-	vector<const MTreeNode*> nodes;
-	nodes.push_back(startNode);
-	while (!nodes.empty())
+	int* maxPtr = std::max_element(weights, weights + mazeRows * mazeColumns - 1);
+
+	printMTreeWeights(weights, mazeRows, mazeColumns);
+
+	std::cout << *maxPtr;
+
+	delete[] weights;
+
+	delete startNode;
+}
+
+int* getMTreeWeights(const MTreeNode& startNode, int mazeRows, int mazeColumns)
+{
+	int* weights = new int[mazeRows * mazeColumns];
+	weights[startNode.i() * mazeColumns + startNode.j()] = 0;
+
+	std::vector<const MTreeNode*> stack;
+	stack.push_back(&startNode);
+	while (!stack.empty())
 	{
-		const MTreeNode* currentNode = nodes.back();
-		nodes.pop_back();
+		const MTreeNode* currentNode = stack.back();
+		stack.pop_back();
 		for (int i = 0; i < currentNode->childCount(); i++)
 		{
 			const MTreeNode* child = currentNode->child(i);
 			weights[child->i() * mazeColumns + child->j()] = child->distance();
-			nodes.push_back(child);
+			stack.push_back(child);
 		}
 	}
 
-	int max = 0;
+	return weights;
+}
 
+void printMTreeWeights(const int* weights, int mazeRows, int mazeColumns)
+{
 	for (int i = 0; i < mazeRows; i++)
 	{
 		for (int j = 0; j < mazeColumns; j++)
-		{
-			if (weights[i * mazeColumns + j] > max)
-				max = weights[i * mazeColumns + j];
 			printf("%-3d ", weights[i * mazeColumns + j]);
-		}
 		std::cout << std::endl;
 	}
-	delete[] weights;
-
-	cout << max;
 }
 
 MTreeNode* makeChain(MTreeNode& startNode, direction dir, int length)
@@ -186,7 +184,7 @@ MTreeNode* makeChain(MTreeNode& startNode, direction dir, int length)
 
 void buildFullMaze(Maze& iMaze, MTreeNode& tree)
 {
-	vector<const MTreeNode*> nodes;
+	std::vector<const MTreeNode*> nodes;
 	nodes.push_back(&tree);
 	while (!nodes.empty())
 	{

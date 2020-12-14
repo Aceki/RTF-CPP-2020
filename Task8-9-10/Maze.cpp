@@ -128,7 +128,7 @@ bool Maze::hasConnection(int i1, int j1, int i2, int j2) const
 	if (abs_offset_i == 1)
 		return cell(std::min(i1, i2), j1).m_down;
 	else
-		return cell(i1, std::min(j1, j1)).m_right;
+		return cell(i1, std::min(j1, j2)).m_right;
 }
 
 bool Maze::makeConnection(int i1, int j1, int i2, int j2)
@@ -168,7 +168,7 @@ bool Maze::removeConnection(int i1, int j1, int i2, int j2)
 	if (abs_offset_i == 1)
 		cell(std::min(i1, i2), j1).m_down = false;
 	else
-		cell(i1, std::min(j1, j1)).m_right = false;
+		cell(i1, std::min(j1, j2)).m_right = false;
 
 	return true;
 }
