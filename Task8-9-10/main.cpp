@@ -64,12 +64,14 @@ int main()
 	{
 		for (int j = 0; j < mazeColumns; j++)
 		{
-			std::cout << weights[i * mazeColumns + j] << ' ';
+			std::wcout << weights[i * mazeColumns + j] << ' ';
 		}
-		std::cout << std::endl;
+		std::wcout << std::endl;
 	}
 
 	delete[] weights;
+
+	delete startNode;
 }
 
 void buildFullMaze(Maze& iMaze, MTreeNode& tree)
