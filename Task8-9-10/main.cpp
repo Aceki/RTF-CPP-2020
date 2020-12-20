@@ -25,7 +25,7 @@ MTreeNode* makeChain(MTreeNode& startNode, direction dir, int length);
 int main()
 {
     setlocale(LC_ALL, "en_US.UTF-8");
-	srand(time(NULL));
+  srand(time(NULL));
 
     constexpr int mazeRows = 20;
     constexpr int mazeColumns = 20;
