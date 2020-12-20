@@ -110,7 +110,7 @@ int main()
 
 	printMTreeWeights(weights, mazeRows, mazeColumns);
 
-	std::cout << *maxPtr;
+	std::wcout << *maxPtr << std::endl;
 
 	delete[] weights;
 
@@ -144,8 +144,8 @@ void printMTreeWeights(const int* weights, int mazeRows, int mazeColumns)
 	for (int i = 0; i < mazeRows; i++)
 	{
 		for (int j = 0; j < mazeColumns; j++)
-			printf("%-3d ", weights[i * mazeColumns + j]);
-		std::cout << std::endl;
+			wprintf(L"%-4d", weights[i * mazeColumns + j]);
+		std::wcout << std::endl;
 	}
 }
 

@@ -37,6 +37,8 @@ const MTreeNode* MTreeNode::searchNode(const MTreeNode& tree, const int i, const
 			nodes.push_back(child);
 		}
 	}
+
+	return nullptr;
 }
 
 const MTreeNode* MTreeNode::child(int i) const
