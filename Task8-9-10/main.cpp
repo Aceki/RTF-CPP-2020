@@ -14,18 +14,18 @@ enum direction
 	d_right
 };
 
-int* getMTreeWeights(const MTreeNode& startNode, int mazeRows, int mazeColumns);
+int* getMTreeWeights(const MTreeNode& startNode, const int mazeRows, const int mazeColumns);
 
-void printMTreeWeights(const int* weights, int mazeRows, int mazeColumns);
+void printMTreeWeights(const int* weights, const int mazeRows, const int mazeColumns);
 
-void buildFullMaze(Maze& iMaze, MTreeNode& tree);
+void buildFullMaze(Maze& iMaze, const MTreeNode& tree);
 
 MTreeNode* makeChain(MTreeNode& startNode, direction dir, int length);
 
 int main()
 {
     setlocale(LC_ALL, "en_US.UTF-8");
-  srand(time(NULL));
+	srand(time(NULL));
 
     constexpr int mazeRows = 20;
     constexpr int mazeColumns = 20;
@@ -117,7 +117,7 @@ int main()
 	delete startNode;
 }
 
-int* getMTreeWeights(const MTreeNode& startNode, int mazeRows, int mazeColumns)
+int* getMTreeWeights(const MTreeNode& startNode, const int mazeRows, const int mazeColumns)
 {
 	int* weights = new int[mazeRows * mazeColumns];
 	weights[startNode.i() * mazeColumns + startNode.j()] = 0;
@@ -139,7 +139,7 @@ int* getMTreeWeights(const MTreeNode& startNode, int mazeRows, int mazeColumns)
 	return weights;
 }
 
-void printMTreeWeights(const int* weights, int mazeRows, int mazeColumns)
+void printMTreeWeights(const int* weights, const int mazeRows, const int mazeColumns)
 {
 	for (int i = 0; i < mazeRows; i++)
 	{
@@ -182,7 +182,7 @@ MTreeNode* makeChain(MTreeNode& startNode, direction dir, int length)
 	return &startNode;
 }
 
-void buildFullMaze(Maze& iMaze, MTreeNode& tree)
+void buildFullMaze(Maze& iMaze, const MTreeNode& tree)
 {
 	std::vector<const MTreeNode*> nodes;
 	nodes.push_back(&tree);
