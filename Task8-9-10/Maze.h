@@ -21,6 +21,10 @@ public:
 
 	~Maze();
 private:
+	bool inBounds(int i, int j) const { return i >= 0 && i < m_n && j >= 0 && j < m_m; }
+
+	bool isNeighbours(int i1, int j1, int i2, int j2) const { return abs(i2 - i1) + abs(j2 - j1) == 1; }
+
 	MCell* m_field;
 	const int m_n;
 	const int m_m;
