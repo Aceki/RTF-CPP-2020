@@ -114,61 +114,65 @@ void Maze::printMaze() const
 
 bool Maze::hasConnection(int i1, int j1, int i2, int j2) const
 {
-	if (i1 < 0 || i1 >= m_n || j1 < 0 || j1 >= m_m)
-		return false;
-	if (i2 < 0 || i2 >= m_n || j2 < 0 || j2 >= m_m)
+	if (!isNeighbours(i1, j1, i2, j2) || !inBounds(i1, j1) || !inBounds(i2, j2))
 		return false;
 
 	const int abs_offset_i = abs(i2 - i1);
 	const int abs_offset_j = abs(j2 - j1);
 
-	if (abs_offset_i + abs_offset_j != 1)
-		return false;
+	MCell& chg_cell = cell(std::min(i1, i2), std::min(j1, j2));
 
-	if (abs_offset_i == 1)
-		return cell(std::min(i1, i2), j1).m_down;
-	else
-		return cell(i1, std::min(j1, j2)).m_right;
+	return abs_offset_i == 1 ? chg_cell.m_down : chg_cell.m_right;
 }
 
 bool Maze::makeConnection(int i1, int j1, int i2, int j2)
 {
-	if (i1 < 0 || i1 >= m_n || j1 < 0 || j1 >= m_m)
-		return false;
-	if (i2 < 0 || i2 >= m_n || j2 < 0 || j2 >= m_m)
+	if (!isNeighbours(i1, j1, i2, j2) || !inBounds(i1, j1) || !inBounds(i2, j2))
 		return false;
 
 	const int abs_offset_i = abs(i2 - i1);
 	const int abs_offset_j = abs(j2 - j1);
 
-	if (abs_offset_i + abs_offset_j != 1)
-		return false;
+	MCell& chg_cell = cell(std::min(i1, i2), std::min(j1, j2));
 
-	if (abs_offset_i == 1)
-		cell(std::min(i1, i2), j1).m_down = true;
-	else
-		cell(i1, std::min(j1, j2)).m_right = true;
+	if (abs_offset_i == 1) {
+		if (!chg_cell.m_down)
+			chg_cell.m_down = true;
+		else
+			return false;
+	} 
+	else {
+		if (!chg_cell.m_right)
+			chg_cell.m_right = true;
+		else
+			return false;
+	}
 
 	return true;
 }
 
 bool Maze::removeConnection(int i1, int j1, int i2, int j2)
 {
-	if (i1 < 0 || i1 >= m_n || j1 < 0 || j1 >= m_m)
-		return false;
-	if (i2 < 0 || i2 >= m_n || j2 < 0 || j2 >= m_m)
+	if (!isNeighbours(i1, j1, i2, j2) || !inBounds(i1, j1) || !inBounds(i2, j2))
 		return false;
 
 	const int abs_offset_i = abs(i2 - i1);
 	const int abs_offset_j = abs(j2 - j1);
 
-	if (abs_offset_i + abs_offset_j != 1)
-		return false;
+	MCell& chg_cell = cell(std::min(i1, i2), std::min(j1, j2));
 
-	if (abs_offset_i == 1)
-		cell(std::min(i1, i2), j1).m_down = false;
-	else
-		cell(i1, std::min(j1, j2)).m_right = false;
+	if (abs_offset_i == 1) {
+		if (chg_cell.m_down)
+			chg_cell.m_down = false;
+		else
+			return false;
+	}
+	else {
+		if (chg_cell.m_right)
+			chg_cell.m_right = false;
+		else
+			return false;
+	}
 
 	return true;
 }
@@ -177,3 +181,4 @@ Maze::~Maze()
 {
 	delete[] m_field;
 }
+
