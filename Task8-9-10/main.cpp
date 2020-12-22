@@ -22,6 +22,7 @@ int main()
 
     constexpr int mazeRows = 5;
     constexpr int mazeColumns = 5;
+    constexpr int ladderSteps = mazeRows - 1;
 
     Maze maze(mazeRows, mazeColumns);
 
