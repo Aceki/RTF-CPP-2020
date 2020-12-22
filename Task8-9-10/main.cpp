@@ -5,6 +5,7 @@
 
 #include "MTreeNode.h"
 #include "Maze.h"
+#include "MTreeNode.h"
 
 enum direction
 {
