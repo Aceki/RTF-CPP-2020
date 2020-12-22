@@ -12,7 +12,7 @@ Maze::Maze(int n, int m) : m_n(n), m_m(m)
 MCell& Maze::cell(int i, int j) const
 {
 	assert(i >= 0 && i < m_n && j >= 0 && j < m_m);
-
+  
 	return m_field[i * m_m + j];
 }
 
