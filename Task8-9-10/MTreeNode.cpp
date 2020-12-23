@@ -1,7 +1,5 @@
 #include <vector>
 #include <cassert>
-#include <stdlib.h>
-#include <iostream>
 
 #include "MTreeNode.h"
 
