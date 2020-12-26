@@ -1,172 +1,98 @@
-#include <cmath>
-#include <vector>
 #include <iostream>
-#include <algorithm>
+#include <vector>
 
-#include "MTreeNode.h"
 #include "Maze.h"
+#include "MTreeNode.h"
 
 enum direction
 {
-	d_up = 0,
+	d_up,
 	d_down,
 	d_left,
 	d_right
 };
 
-MTreeNode* generateRandomMTree(const int startI, const int startJ, const int rows, const int columns);
+void buildFullMaze(Maze& iMaze, MTreeNode& tree);
 
-int* getMTreeWeights(const MTreeNode& startNode, const int mazeRows, const int mazeColumns);
-
-void printMTreeWeights(const int* weights, const int mazeRows, const int mazeColumns);
-
-void buildFullMaze(Maze& iMaze, const MTreeNode& tree);
-
-MTreeNode* makeChain(MTreeNode& startNode, direction dir, const int length);
+MTreeNode* makeChain(MTreeNode& startNode, direction dir, int length);
 
 int main()
 {
     setlocale(LC_ALL, "en_US.UTF-8");
-	srand(time(NULL));
 
-    constexpr int mazeRows = 20;
-    constexpr int mazeColumns = 20;
-
-	//Starting border selection
-	constexpr int directionsCount = 4;
-	direction startDir = static_cast<direction>(rand() % directionsCount);
-
-	//Selecting start coordinates
-	int startI = 0;
-	int startJ = 0;
-	switch (startDir)
-	{
-	case d_up:
-		startJ = rand() % mazeColumns;
-		break;
-	case d_down:
-		startI = mazeRows - 1;
-		startJ = rand() % mazeColumns;
-		break;
-	case d_left:
-		startI = rand() % mazeRows;
-		break;
-	case d_right:
-		startJ = mazeColumns - 1;
-		startI = rand() % mazeRows;
-		break;
-	}
+    constexpr int mazeRows = 5;
+    constexpr int mazeColumns = 5;
+    constexpr int ladderSteps = mazeRows - 1;
 
     Maze maze(mazeRows, mazeColumns);
 
-	MTreeNode* startNode = generateRandomMTree(startI, startJ, mazeRows, mazeColumns);
+	MTreeNode* startNode = MTreeNode::beginTree(0, 0);
 
-	buildFullMaze(maze, *startNode); //Create a maze using a tree
+	MTreeNode* currentNode = startNode;
+	while ((currentNode->i() + 1 < mazeRows) && (currentNode->j() + 1 < mazeColumns))
+	{
+		makeChain(*currentNode, d_down, mazeRows - currentNode->i() - 1);
+		makeChain(*currentNode, d_right, mazeColumns - currentNode->j() - 1);
+
+		currentNode = currentNode->hasChild(currentNode->i(), currentNode->j() + 1);
+		currentNode->addChild(currentNode->i() + 1, currentNode->j());
+		currentNode = currentNode->hasChild(currentNode->i() + 1, currentNode->j());
+	}
+
+	buildFullMaze(maze, *startNode);
 
 	maze.printMaze();
+	
+	int* weights = new int[mazeRows * mazeColumns];
+	weights[0] = 0;
 
-	int* weights = getMTreeWeights(*startNode, mazeRows, mazeColumns);
+	std::vector<const MTreeNode*> nodes;
+	nodes.reserve(mazeRows * mazeColumns);
+	nodes.push_back(startNode);
+	while (!nodes.empty())
+	{
+		const MTreeNode* currentNode = nodes.back();
+		nodes.pop_back();
+		for (int i = 0; i < currentNode->childCount(); i++)
+		{
+			const MTreeNode* child = currentNode->child(i);
+			weights[child->i() * mazeColumns + child->j()] = child->distance();
+			nodes.push_back(child);
+		}
+	}
 
-	int* maxPtr = std::max_element(weights, weights + mazeRows * mazeColumns - 1);
-
-	printMTreeWeights(weights, mazeRows, mazeColumns);
-
-	std::wcout << *maxPtr << std::endl;
+	for (int i = 0; i < mazeRows; i++)
+	{
+		for (int j = 0; j < mazeColumns; j++)
+		{
+			std::wcout << weights[i * mazeColumns + j] << ' ';
+		}
+		std::wcout << std::endl;
+	}
 
 	delete[] weights;
 
 	delete startNode;
 }
 
-MTreeNode* generateRandomMTree(const int startI, const int startJ, const int rows, const int columns)
+void buildFullMaze(Maze& iMaze, MTreeNode& tree)
 {
-	MTreeNode* startNode = MTreeNode::beginTree(startI, startJ);
-
-	constexpr int maxNeighboursCount = 4;
-
-	std::vector<MTreeNode*> stack;
-	stack.push_back(startNode);
-	while (!stack.empty())
+	std::vector<const MTreeNode*> nodes;
+	nodes.push_back(&tree);
+	while (!nodes.empty())
 	{
-		MTreeNode* currentNode = stack.back();
-		stack.pop_back();
-
-		int neighboursCount = 0;
-		MTreeNode* neighbours[maxNeighboursCount];
-
-		for (int offsetI = -1; offsetI <= 1; offsetI++)
-			for (int offsetJ = -1; offsetJ <= 1; offsetJ++)
-			{
-				if (abs(offsetI) + abs(offsetJ) != 1)
-					continue;
-
-				int childI = currentNode->i() + offsetI;
-				int childJ = currentNode->j() + offsetJ;
-
-
-				if (childI >= 0 && childI < rows && childJ >= 0 && childJ < columns
-					&& MTreeNode::searchNode(*startNode, childI, childJ) == nullptr)
-				{
-					currentNode->addChild(childI, childJ);
-					neighbours[neighboursCount++] = currentNode->hasChild(childI, childJ);
-				}
-			}
-
-		if (neighboursCount == 0)
-			continue;
-
-		//Случайный индекс потомка, который будет обрабатываться следующим, т.е. станет «currentNode».
-		int nextNodeIndex = rand() % neighboursCount;
-
-		for (int i = 0; i < neighboursCount; i++)
-		{
-			if (i == nextNodeIndex)
-				continue;
-
-			stack.push_back(neighbours[i]);
-		}
-
-		//Случайно выбранный потомок добавляется в стек последним
-		//Это позволит начать обработку с него в следующей итерации
-		stack.push_back(neighbours[nextNodeIndex]); 
-	}
-
-	return startNode;
-}
-
-int* getMTreeWeights(const MTreeNode& startNode, const int mazeRows, const int mazeColumns)
-{
-	int* weights = new int[mazeRows * mazeColumns];
-	weights[startNode.i() * mazeColumns + startNode.j()] = 0;
-
-	std::vector<const MTreeNode*> stack;
-	stack.push_back(&startNode);
-	while (!stack.empty())
-	{
-		const MTreeNode* currentNode = stack.back();
-		stack.pop_back();
+		const MTreeNode* currentNode = nodes.back();
+		nodes.pop_back();
 		for (int i = 0; i < currentNode->childCount(); i++)
 		{
 			const MTreeNode* child = currentNode->child(i);
-			weights[child->i() * mazeColumns + child->j()] = child->distance();
-			stack.push_back(child);
+			iMaze.makeConnection(currentNode->i(), currentNode->j(), child->i(), child->j());
+			nodes.push_back(child);
 		}
 	}
-
-	return weights;
 }
 
-void printMTreeWeights(const int* weights, const int mazeRows, const int mazeColumns)
-{
-	for (int i = 0; i < mazeRows; i++)
-	{
-		for (int j = 0; j < mazeColumns; j++)
-			wprintf(L"%-4d", weights[i * mazeColumns + j]);
-		std::wcout << std::endl;
-	}
-}
-
-MTreeNode* makeChain(MTreeNode& startNode, direction dir, const int length)
+MTreeNode* makeChain(MTreeNode& startNode, direction dir, int length)
 {
 	if (length == 0)
 		return &startNode;
@@ -197,21 +123,4 @@ MTreeNode* makeChain(MTreeNode& startNode, direction dir, const int length)
 	if (child != nullptr)
 		return makeChain(*child, dir, length - 1);
 	return &startNode;
-}
-
-void buildFullMaze(Maze& iMaze, const MTreeNode& tree)
-{
-	std::vector<const MTreeNode*> nodes;
-	nodes.push_back(&tree);
-	while (!nodes.empty())
-	{
-		const MTreeNode* currentNode = nodes.back();
-		nodes.pop_back();
-		for (int i = 0; i < currentNode->childCount(); i++)
-		{
-			const MTreeNode* child = currentNode->child(i);
-			iMaze.makeConnection(currentNode->i(), currentNode->j(), child->i(), child->j());
-			nodes.push_back(child);
-		}
-	}
 }
