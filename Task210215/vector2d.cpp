@@ -1,5 +1,6 @@
 #include <cmath>
 
+#include "vector3d.h"
 #include "vector2d.h"
 
 double Math::Vector2D::dot(const Vector2D& vec1, const Vector2D& vec2)

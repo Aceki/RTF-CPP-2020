@@ -2,10 +2,10 @@
 
 #include <iostream>
 
-#include "vector3d.h"
-
 namespace Math
 {
+	struct Vector3D;
+
 	struct Vector2D
 	{
 	public:
