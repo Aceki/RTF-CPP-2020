@@ -30,13 +30,13 @@
 #include <iostream>
 
 template<class T>
-T* bubbleSort(T* arr, int (*cmp)(const T& first, const T& second), int size)
+T* bubbleSort(T* arr, bool (*cmp)(const T& first, const T& second), int size)
 {
     for (int i = 0; i < size - 1; i++)
     {
         for (int j = size - 1; j > i; j--)
         {
-            if (cmp(arr[i], arr[j]) > 0)
+            if (cmp(arr[i], arr[j]))
             {
                 T temp = arr[i];
                 arr[i] = arr[j];
@@ -52,13 +52,7 @@ int main()
 {
     int* arr = new int[5]{ 1, 5, 3, 2, 1 };
 
-    auto i_cmp = [](const int& first, const int& second) {
-        if (first > second)
-            return 1;
-        else if (first < second)
-            return -1;
-        return 0;
-    };
+    auto i_cmp = [](const int& first, const int& second) { return first > second; };
 
     bubbleSort<int>(arr, i_cmp, 5);
 
