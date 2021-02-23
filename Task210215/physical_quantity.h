@@ -9,13 +9,13 @@ namespace Physics
 	public:
 		double value() const { return m_value; }
 
-		PhysicalQuantity operator+(const PhysicalQuantity& quantity);
+		PhysicalQuantity operator+(const PhysicalQuantity& quantity) const;
 
-		PhysicalQuantity operator-(const PhysicalQuantity& quantity);
+		PhysicalQuantity operator-(const PhysicalQuantity& quantity) const;
 
-		PhysicalQuantity operator*(const PhysicalQuantity& quantity);
+		PhysicalQuantity operator*(const PhysicalQuantity& quantity) const;
 
-		PhysicalQuantity operator/(const PhysicalQuantity& quantity);
+		PhysicalQuantity operator/(const PhysicalQuantity& quantity) const;
 
 		friend std::ostream& operator<<(std::ostream&, const PhysicalQuantity&);
 	protected:

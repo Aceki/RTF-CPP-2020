@@ -7,13 +7,13 @@ namespace Math
 	struct Vector3D
 	{
 	public:
-		Vector3D(double x, double y, double z) : m_x(x), m_y(y), m_z(z) { }
+		Vector3D() = default;
 
-		Vector3D() : Vector3D(0, 0, 0) { }
+		Vector3D(double x, double y, double z) : m_x(x), m_y(y), m_z(z) { }
 
 		static double dot(const Vector3D& vec1, const Vector3D& vec2);
 
-		static Vector3D cross(const Vector3D vec1, const Vector3D& vec2);
+		static Vector3D cross(const Vector3D& vec1, const Vector3D& vec2);
 
 		static Vector3D zero() { return Vector3D(0, 0, 0); }
 
@@ -39,9 +39,9 @@ namespace Math
 
 		Vector3D operator/(const double& number) const;
 	private:
-		const double m_x;
-		const double m_y;
-		const double m_z;
+		const double m_x = 0;
+		const double m_y = 0;
+		const double m_z = 0;
 	};
 
 	std::ostream& operator<<(std::ostream& os, const Vector3D& vec);

@@ -5,22 +5,22 @@ std::ostream& Physics::operator<<(std::ostream& os, const PhysicalQuantity& quan
 	return (os << quantity.m_value << ' ' << quantity.m_sign);
 }
 
-Physics::PhysicalQuantity Physics::PhysicalQuantity::operator+(const PhysicalQuantity& quantity)
+Physics::PhysicalQuantity Physics::PhysicalQuantity::operator+(const PhysicalQuantity& quantity) const
 {
 	return PhysicalQuantity(value() + quantity.value(), "?");
 }
 
-Physics::PhysicalQuantity Physics::PhysicalQuantity::operator-(const PhysicalQuantity& quantity)
+Physics::PhysicalQuantity Physics::PhysicalQuantity::operator-(const PhysicalQuantity& quantity) const
 {
 	return PhysicalQuantity(value() - quantity.value(), "?");
 }
 
-Physics::PhysicalQuantity Physics::PhysicalQuantity::operator*(const PhysicalQuantity& quantity)
+Physics::PhysicalQuantity Physics::PhysicalQuantity::operator*(const PhysicalQuantity& quantity) const
 {
 	return PhysicalQuantity(value() * quantity.value(), "?");
 }
 
-Physics::PhysicalQuantity Physics::PhysicalQuantity::operator/(const PhysicalQuantity& quantity)
+Physics::PhysicalQuantity Physics::PhysicalQuantity::operator/(const PhysicalQuantity& quantity) const
 {
 	return PhysicalQuantity(value() / quantity.value(), "?");
 }

@@ -2,19 +2,19 @@
 
 #include "complex.h"
 
-inline Complex Complex::operator+(const Complex& number) const
+Complex Complex::operator+(const Complex& number) const
 {
 	return Complex(m_real + number.m_real, m_imaginary + number.m_imaginary);
 }
 
-inline Complex Complex::operator-(const Complex& number) const
+Complex Complex::operator-(const Complex& number) const
 {
 	return Complex(m_real - number.m_real, m_imaginary - number.m_imaginary);
 }
 
-inline Complex Complex::operator*(const Complex& number) const
+Complex Complex::operator*(const Complex& number) const
 {
-	return Complex(m_real * number.m_imaginary - m_imaginary * number.m_imaginary, 
+	return Complex(m_real * number.m_real - m_imaginary * number.m_imaginary, 
 				   m_imaginary * number.m_real + m_real * number.m_imaginary);
 }
 

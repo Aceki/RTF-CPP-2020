@@ -9,9 +9,9 @@ namespace Math
 	struct Vector2D
 	{
 	public:
-		Vector2D(double x, double y) : m_x(x), m_y(y) { }
+		Vector2D() = default;
 
-		Vector2D() : Vector2D(0, 0) { }
+		Vector2D(double x, double y) : m_x(x), m_y(y) { }
 
 		static double dot(const Vector2D& vec1, const Vector2D& vec2);
 
@@ -33,8 +33,8 @@ namespace Math
 
 		Vector2D operator/(const double& number) const;
 	private:
-		const double m_x;
-		const double m_y;
+		const double m_x = 0;
+		const double m_y = 0;
 	};
 
 	std::ostream& operator<<(std::ostream& os, const Vector2D& vec);

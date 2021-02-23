@@ -22,17 +22,17 @@ Math::Vector2D Math::Vector2D::normalized() const
 	return *this / getLength();
 }
 
-inline Math::Vector2D Math::Vector2D::operator+(const Vector2D& vec) const
+Math::Vector2D Math::Vector2D::operator+(const Vector2D& vec) const
 {
 	return Vector2D(m_x + vec.m_x, m_y + vec.m_y);
 }
 
-inline Math::Vector2D Math::Vector2D::operator-(const Vector2D& vec) const
+Math::Vector2D Math::Vector2D::operator-(const Vector2D& vec) const
 {
 	return Vector2D(m_x - vec.m_x, m_y - vec.m_y);
 }
 
-inline Math::Vector2D Math::Vector2D::operator/(const double& number) const
+Math::Vector2D Math::Vector2D::operator/(const double& number) const
 {
 	return Vector2D(m_x / number, m_y / number);
 }

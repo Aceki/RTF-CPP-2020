@@ -1,8 +1,10 @@
 #include "amperage.h"
 
-double Amperage::value()
+double Amperage::value() const
 {
-	m_readCount++;
+	static int readCount = 0;
+	
+	readCount++;
 
 	return m_value;
 }

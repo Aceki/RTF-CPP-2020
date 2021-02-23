@@ -7,9 +7,9 @@ namespace Math
 	struct Vector4D
 	{
 	public:
-		Vector4D(double x, double y, double z, double t) : m_x(x), m_y(y), m_z(z), m_t(t) { }
+		Vector4D() = default;
 
-		Vector4D() : Vector4D(0, 0, 0, 0) { }
+		Vector4D(double x, double y, double z, double t) : m_x(x), m_y(y), m_z(z), m_t(t) { }
 
 		static double dot(const Vector4D& vec1, const Vector4D& vec2);
 
@@ -31,12 +31,12 @@ namespace Math
 
 		Vector4D operator-(const Vector4D& vec) const;
 
-		Vector4D operator/(const double& number) const;
+		Vector4D operator/(const double number) const;
 	private:
-		const double m_x;
-		const double m_y;
-		const double m_z;
-		const double m_t;
+		const double m_x = 0;
+		const double m_y = 0;
+		const double m_z = 0;
+		const double m_t = 0;
 	};
 
 	std::ostream& operator<<(std::ostream& os, const Vector4D& vec);

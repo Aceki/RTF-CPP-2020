@@ -5,10 +5,8 @@ class Amperage
 public:
 	explicit Amperage(double value) : m_value(value) { }
 
-	double value();
+	double value() const;
 private:
-	int m_readCount = 0;
-
 	double m_value;
 };
 
