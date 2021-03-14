@@ -19,9 +19,17 @@ namespace Physics
 
 		Pressure operator-(const PhysicalQuantity& quantity) const;
 
+		Pressure operator*(const PhysicalQuantity& quantity) const;
+
+		Pressure operator/(const PhysicalQuantity& quantity) const;
+
 		Pressure& operator+=(const PhysicalQuantity& quantity);
 
 		Pressure& operator-=(const PhysicalQuantity& quantity);
+
+		Pressure& operator*=(const PhysicalQuantity& quantity);
+
+		Pressure& operator/=(const PhysicalQuantity& quantity);
 	private:
 		double m_value = 0;
 	};

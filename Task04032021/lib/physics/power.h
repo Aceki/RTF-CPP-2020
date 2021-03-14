@@ -19,9 +19,17 @@ namespace Physics
 
 		Power operator-(const PhysicalQuantity& quantity) const;
 
+		Power operator*(const PhysicalQuantity& quantity) const;
+
+		Power operator/(const PhysicalQuantity& quantity) const;
+
 		Power& operator+=(const PhysicalQuantity& quantity);
 
 		Power& operator-=(const PhysicalQuantity& quantity);
+
+		Power& operator*=(const PhysicalQuantity& quantity);
+
+		Power& operator/=(const PhysicalQuantity& quantity);
     private:
         double m_value = 0;
     };

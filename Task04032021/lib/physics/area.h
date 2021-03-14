@@ -19,9 +19,17 @@ namespace Physics
 
 		Area operator-(const PhysicalQuantity& quantity) const;
 
+		Area operator*(const PhysicalQuantity& quantity) const;
+
+		Area operator/(const PhysicalQuantity& quantity) const;
+
 		Area& operator+=(const PhysicalQuantity& quantity);
 
 		Area& operator-=(const PhysicalQuantity& quantity);
+
+		Area& operator*=(const PhysicalQuantity& quantity);
+
+		Area& operator/=(const PhysicalQuantity& quantity);
 	private:
 		double m_value = 0;
 	};
