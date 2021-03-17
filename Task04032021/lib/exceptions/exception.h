@@ -11,7 +11,7 @@ public:
 protected:
 	Exception(std::string submessage) : m_submessage(submessage) { };
 private:
-	std::string m_message = "Exception was occured with message: ";
+	std::string m_message = "Exception has occured with message: ";
 	std::string m_submessage;
 };
 
