@@ -4,15 +4,15 @@
 
 Physics::Area Physics::Area::operator+(const PhysicalQuantity& quantity) const
 {
-    if(const Area* AreaPtr = dynamic_cast<const Area*>(&quantity))
-        return Area(m_value + AreaPtr->m_value);
+    if(const Area* areaPtr = dynamic_cast<const Area*>(&quantity))
+        return Area(m_value + areaPtr->m_value);
     throw LogicException();
 } 
 
 Physics::Area Physics::Area::operator-(const PhysicalQuantity& quantity) const
 {
-    if(const Area* AreaPtr = dynamic_cast<const Area*>(&quantity))
-        return Area(m_value - AreaPtr->m_value);
+    if(const Area* areaPtr = dynamic_cast<const Area*>(&quantity))
+        return Area(m_value - areaPtr->m_value);
     throw LogicException();
 }
 
@@ -28,9 +28,9 @@ Physics::Area Physics::Area::operator/(const PhysicalQuantity& quantity) const
 
 Physics::Area& Physics::Area::operator+=(const PhysicalQuantity& quantity)
 {
-    if(const Area* AreaPtr = dynamic_cast<const Area*>(&quantity))
+    if(const Area* areaPtr = dynamic_cast<const Area*>(&quantity))
     {
-        m_value += AreaPtr->m_value;
+        m_value += areaPtr->m_value;
 
         return *this;
     }
@@ -39,9 +39,9 @@ Physics::Area& Physics::Area::operator+=(const PhysicalQuantity& quantity)
 
 Physics::Area& Physics::Area::operator-=(const PhysicalQuantity& quantity)
 {
-    if(const Area* AreaPtr = dynamic_cast<const Area*>(&quantity))
+    if(const Area* areaPtr = dynamic_cast<const Area*>(&quantity))
     {
-        m_value -= AreaPtr->m_value;
+        m_value -= areaPtr->m_value;
 
         return *this;
     }

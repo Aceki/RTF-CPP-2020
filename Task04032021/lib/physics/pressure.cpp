@@ -4,15 +4,15 @@
 
 Physics::Pressure Physics::Pressure::operator+(const PhysicalQuantity& quantity) const
 {
-    if(const Pressure* PressurePtr = dynamic_cast<const Pressure*>(&quantity))
-        return Pressure(m_value + PressurePtr->m_value);
+    if(const Pressure* pressurePtr = dynamic_cast<const Pressure*>(&quantity))
+        return Pressure(m_value + pressurePtr->m_value);
     throw LogicException();
 } 
 
 Physics::Pressure Physics::Pressure::operator-(const PhysicalQuantity& quantity) const
 {
-    if(const Pressure* PressurePtr = dynamic_cast<const Pressure*>(&quantity))
-        return Pressure(m_value - PressurePtr->m_value);
+    if(const Pressure* pressurePtr = dynamic_cast<const Pressure*>(&quantity))
+        return Pressure(m_value - pressurePtr->m_value);
     throw LogicException();
 }
 
@@ -28,9 +28,9 @@ Physics::Pressure Physics::Pressure::operator/(const PhysicalQuantity& quantity)
 
 Physics::Pressure& Physics::Pressure::operator+=(const PhysicalQuantity& quantity)
 {
-    if(const Pressure* PressurePtr = dynamic_cast<const Pressure*>(&quantity))
+    if(const Pressure* pressurePtr = dynamic_cast<const Pressure*>(&quantity))
     {
-        m_value += PressurePtr->m_value;
+        m_value += pressurePtr->m_value;
 
         return *this;
     }
@@ -39,9 +39,9 @@ Physics::Pressure& Physics::Pressure::operator+=(const PhysicalQuantity& quantit
 
 Physics::Pressure& Physics::Pressure::operator-=(const PhysicalQuantity& quantity)
 {
-    if(const Pressure* PressurePtr = dynamic_cast<const Pressure*>(&quantity))
+    if(const Pressure* pressurePtr = dynamic_cast<const Pressure*>(&quantity))
     {
-        m_value -= PressurePtr->m_value;
+        m_value -= pressurePtr->m_value;
 
         return *this;
     }
