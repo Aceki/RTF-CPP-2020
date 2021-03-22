@@ -16,8 +16,6 @@ namespace Pointers
 
         UniquePointer(UniquePointer<T>&&);
 
-        ~UniquePointer() { delete m_pointer; }
-
         T* get() const { return m_pointer; }
 
         void reset(T* pointer);
@@ -37,6 +35,8 @@ namespace Pointers
         bool operator==(const UniquePointer<T>& uptr) { return m_pointer == uptr.m_pointer; }
 
         operator bool() const { return !isEmpty(); }
+
+	~UniquePointer() { delete m_pointer; }
     private:
         bool isEmpty() const { return m_pointer == nullptr; }
 
