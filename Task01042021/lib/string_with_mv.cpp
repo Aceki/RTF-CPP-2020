@@ -113,3 +113,8 @@ StringWithMove::~StringWithMove()
 {
 	delete[] m_cstr;
 }
+
+std::ostream& operator<<(std::ostream& os, const StringWithMove& str)
+{
+	return os << str.m_cstr;
+}
