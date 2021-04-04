@@ -79,12 +79,15 @@ StringWithMove& StringWithMove::operator+=(const StringWithMove& obj)
 
 StringWithMove& StringWithMove::operator=(const char* cstr)
 {
-	delete[] m_cstr;
+	if (m_cstr != cstr)
+	{
+		delete[] m_cstr;
 
-	m_length = std::strlen(cstr);
-	m_cstr = new char[m_length + 1];
+		m_length = std::strlen(cstr);
+		m_cstr = new char[m_length + 1];
 
-	std::strcpy(m_cstr, cstr);
+		std::strcpy(m_cstr, cstr);
+	}
 
 	return *this;
 }
@@ -96,15 +99,18 @@ StringWithMove& StringWithMove::operator=(const StringWithMove& obj)
 
 StringWithMove& StringWithMove::operator=(StringWithMove&& obj)
 {
-    delete[] m_cstr;
+	if (m_cstr != obj.m_cstr) 
+	{
+		delete[] m_cstr;
 
-    m_length = obj.m_length;
+		m_length = obj.m_length;
 
-    obj.m_length = 0;
+		obj.m_length = 0;
 
-    m_cstr = obj.m_cstr;
+		m_cstr = obj.m_cstr;
 
-    obj.m_cstr = nullptr;
+		obj.m_cstr = nullptr;
+	}
 
     return *this;
 }

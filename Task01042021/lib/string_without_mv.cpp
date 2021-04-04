@@ -68,18 +68,21 @@ StringWithoutMove& StringWithoutMove::operator+=(const StringWithoutMove& obj)
 
 StringWithoutMove& StringWithoutMove::operator=(const char* cstr)
 {
-	delete[] m_cstr;
+	if (m_cstr != cstr) 
+	{
+		delete[] m_cstr;
 
-	m_length = std::strlen(cstr);
-	m_cstr = new char[m_length + 1];
+		m_length = std::strlen(cstr);
+		m_cstr = new char[m_length + 1];
 
-	std::strcpy(m_cstr, cstr);
+		std::strcpy(m_cstr, cstr);
+	}
 
 	return *this;
 }
 
 StringWithoutMove& StringWithoutMove::operator=(const StringWithoutMove& obj)
-{
+{	
 	return *this = obj.m_cstr;
 }
 
