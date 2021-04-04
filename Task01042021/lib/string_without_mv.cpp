@@ -37,6 +37,8 @@ StringWithoutMove StringWithoutMove::operator+(const char* cstr) const
 
 	StringWithoutMove result = StringWithoutMove(m_cstr_concat);
 
+	delete[] m_cstr_concat;
+
 	return result;
 }
 

@@ -48,6 +48,8 @@ StringWithMove StringWithMove::operator+(const char* cstr) const
 
 	StringWithMove result = StringWithMove(m_cstr_concat);
 
+	delete[] m_cstr_concat;
+
 	return result;
 }
 
